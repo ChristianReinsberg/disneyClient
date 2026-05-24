@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using DisneyApi.Data;
+using DisneyApi.Services;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +24,20 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHttpClient("tmdbClient", client =>
+{   
+    var api_key = builder.Configuration["TmdbApiKey"];
+    client.BaseAddress = new Uri("https://api.themoviedb.org/3/");
+    client.DefaultRequestHeaders.Add("accept", "application/json");
+    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {api_key}");
+});
 builder.Services.AddHttpClient("disneyClient", client =>
 {
     client.BaseAddress = new Uri("https://api.disneyapi.dev/");
     client.DefaultRequestHeaders.Add("User-Agent", "DisneyPortfolioApp/1.0");
 });
 
+builder.Services.AddScoped<TmdbService>();
 
 var app = builder.Build();
 

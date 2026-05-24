@@ -5,6 +5,7 @@ using DisneyApi.Models;
 using Microsoft.Extensions.Caching.Memory;
 using DisneyApi.DTOs;
 using System.Text.Json;
+using DisneyApi.Services;
 
 namespace DisneyApi.Controllers
 {
@@ -15,12 +16,14 @@ namespace DisneyApi.Controllers
         private readonly AppDbContext _context;
         private IMemoryCache _cache;
         private IHttpClientFactory _httpClient;
+        private TmdbService _tmdbService;
 
-        public CharacterController(AppDbContext context, IMemoryCache cache, IHttpClientFactory httpClientFactory)
+        public CharacterController(AppDbContext context, IMemoryCache cache, IHttpClientFactory httpClientFactory, TmdbService tmdbService)
         {
             _context = context;
             _cache = cache;
             _httpClient = httpClientFactory;
+            _tmdbService = tmdbService;
         }
 
         [HttpGet]
@@ -152,6 +155,77 @@ namespace DisneyApi.Controllers
                 };
             }
 
+            var films = character.Films.Concat(character.ShortFilms);
+            foreach (var title in films)
+            {
+                var tmdbData = await _tmdbService.GetTmdbMovieAsync(title);
+                var data = tmdbData?.FirstOrDefault();
+
+                if (data != null)
+                {
+                    var existingMedia = _context.Medias.Local.FirstOrDefault(m => m.Id == data.Id && m.MediaType == "Movie");
+                    if (existingMedia == null)
+                    {
+                        await _context.Medias
+                        .FirstOrDefaultAsync(m => m.Id == data.Id && m.MediaType == "Movie");
+                    }
+                    if (existingMedia == null)
+                    {
+                        existingMedia = new Media
+                        {
+                            Id = data.Id,
+                            MediaType = "Movie",
+                            Name = !string.IsNullOrEmpty(data.Name) ? data.Name : data.Title,
+                            Overview = data.Overview,
+                            PosterPath = data.Poster_Path,
+                            ReleaseDate = data.Release_Date,
+                            VoteAvg = data.Vote_Average,
+                            VoteCount = data.Vote_Count
+                        };
+                        _context.Medias.Add(existingMedia);
+                    }
+                    if (existingMedia != null && !existingChar.Medias.Contains(existingMedia))
+                    {
+                        existingChar.Medias.Add(existingMedia);
+                    }
+                }
+            }
+            var series = character.TvShows;
+            foreach (var title in series)
+            {
+                var tmdbData = await _tmdbService.GetTmdbSeriesAsync(title);
+                var data = tmdbData.FirstOrDefault();
+
+                if (data != null)
+                {
+                    var existingMedia = _context.Medias.Local.FirstOrDefault(m => m.Id == data.Id && m.MediaType == "TV");
+                    if (existingMedia == null)
+                    {
+                        existingMedia = await _context.Medias
+                        .FirstOrDefaultAsync(m => m.Id == data.Id && m.MediaType == "TV");
+                    }
+                    
+                    if (existingMedia == null)
+                    {
+                        existingMedia = new Media
+                        {
+                            Id = data.Id,
+                            MediaType = "TV",
+                            Name = !string.IsNullOrEmpty(data.Name) ? data.Name : data.Title,
+                            Overview = data.Overview,
+                            PosterPath = data.Poster_Path,
+                            ReleaseDate = data.First_Air_Date,
+                            VoteAvg = data.Vote_Average,
+                            VoteCount = data.Vote_Count
+                        };
+                        _context.Medias.Add(existingMedia);
+                    }
+                    if (existingMedia != null && !existingChar.Medias.Contains(existingMedia))
+                    {
+                        existingChar.Medias.Add(existingMedia);
+                    }
+                }
+            }
             if (isNewChar)
             {
                 _context.Characters.Add(existingChar);
