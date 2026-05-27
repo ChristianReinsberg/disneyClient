@@ -21,21 +21,86 @@ namespace DisneyApi.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<Media>>> GetMedia()
+        public async Task<ActionResult<PagedResult<Media>>> GetMedia(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 50
+        )
         {
-            return await _context.Medias.ToListAsync();
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 || pageSize > 100 ? 50 : pageSize;
+            int totalItems = await _context.Medias.CountAsync();
+            var items = await _context.Medias
+            .AsNoTracking()
+            .Include(m => m.Characters)
+            .OrderBy(m => m.Name)
+            .Skip(page - 1 * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+            var result = new PagedResult<Media>
+            {
+                Items = items,
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+            
+            return Ok(result);
         }
 
         [HttpGet("movies")]
-        public async Task<ActionResult<IEnumerable<Media>>> GetMovies()
+        public async Task<ActionResult<PagedResult<Media>>> GetMovies(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 50
+        )
         {
-            return await _context.Medias.Where(m => m.MediaType == "Movie").ToListAsync();
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 || pageSize > 100 ? 50 : pageSize;
+            int totalItems = await _context.Medias.Where(m => m.MediaType == "Movie").CountAsync();
+            var items = await _context.Medias
+            .Where(m => m.MediaType == "Movie")
+            .AsNoTracking()
+            .Include(m => m.Characters)
+            .OrderBy(m => m.Name)
+            .Skip(page - 1 * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+            var result = new PagedResult<Media>
+            {
+                Items = items,
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+            
+            return Ok(result);
         }
 
         [HttpGet("series")]
-        public async Task<ActionResult<IEnumerable<Media>>> GetSeries()
+        public async Task<ActionResult<PagedResult<Media>>> GetSeries(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 50
+        )
         {
-            return await _context.Medias.Where(m => m.MediaType == "TV").ToListAsync();
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 || pageSize > 100 ? 50 : pageSize;
+            int totalItems = await _context.Medias.Where(m => m.MediaType == "TV").CountAsync();
+            var items = await _context.Medias
+            .Where(m => m.MediaType == "TV")
+            .AsNoTracking()
+            .Include(m => m.Characters)
+            .OrderBy(m => m.Name)
+            .Skip(page - 1 * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+            var result = new PagedResult<Media>
+            {
+                Items = items,
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+            
+            return Ok(result);
         }
 
         [HttpGet("movie/{id}")]
