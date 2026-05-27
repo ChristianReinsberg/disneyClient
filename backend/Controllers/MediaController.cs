@@ -26,6 +26,18 @@ namespace DisneyApi.Controllers
             return await _context.Medias.ToListAsync();
         }
 
+        [HttpGet("movies")]
+        public async Task<ActionResult<IEnumerable<Media>>> GetMovies()
+        {
+            return await _context.Medias.Where(m => m.MediaType == "Movie").ToListAsync();
+        }
+
+        [HttpGet("series")]
+        public async Task<ActionResult<IEnumerable<Media>>> GetSeries()
+        {
+            return await _context.Medias.Where(m => m.MediaType == "TV").ToListAsync();
+        }
+
         [HttpGet("movie/{id}")]
         public async Task<IActionResult> GetMovie(int id) {
             string cacheKey = $"movie_{id}";
