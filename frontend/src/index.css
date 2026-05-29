@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+    --color-disney-blue: #01147C;
+}
+
+.media-list-container {
+    max-height: 9.375rem;
+    overflow-y: auto;
+}
+
+.media-list-container::after {
+    content: "";
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: block;
+    height: 2.5rem;
+    margin-top: -1.25rem;
+    background: linear-gradient(transparent, white);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.no-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

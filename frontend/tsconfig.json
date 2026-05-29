@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+      "jsx": "react-jsx",
+      "target": "ES2024",
+      "module": "NodeNext",
+      "moduleResolution": "nodenext",
+      "lib": ["ESNext", "DOM", "DOM.Iterable"],
+      "allowJs": true,
+      "allowSyntheticDefaultImports": true,
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      
+      "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "useUnknownInCatchVariables": true,
+      
+      "outDir": "./build/",
+      "rootDir": "./",
+      "sourceMap": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": ["src/**/*"]
+}
