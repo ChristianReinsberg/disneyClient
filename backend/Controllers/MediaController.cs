@@ -33,7 +33,7 @@ namespace DisneyApi.Controllers
             .AsNoTracking()
             .Include(m => m.Characters)
             .OrderBy(m => m.Name)
-            .Skip(page - 1 * pageSize)
+            .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
             var result = new PagedResult<Media>
@@ -61,7 +61,7 @@ namespace DisneyApi.Controllers
             .AsNoTracking()
             .Include(m => m.Characters)
             .OrderBy(m => m.Name)
-            .Skip(page - 1 * pageSize)
+            .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
             var result = new PagedResult<Media>
@@ -89,7 +89,7 @@ namespace DisneyApi.Controllers
             .AsNoTracking()
             .Include(m => m.Characters)
             .OrderBy(m => m.Name)
-            .Skip(page - 1 * pageSize)
+            .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
             var result = new PagedResult<Media>
