@@ -1,0 +1,1 @@
+export const img_base = 'https://media.themoviedb.org/t/p/w342';

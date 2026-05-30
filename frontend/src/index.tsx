@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import './index.css';
 import Characters from './Characters';
+import Medias from './Media';
+import Movies from './Movies';
+import Series from './Series';
 
 const NavigationHeader = () => {
   return (
@@ -11,6 +14,9 @@ const NavigationHeader = () => {
       <nav>
         <ul className="flex gap-4">
           <li><Link to="/" className="text-disney-blue hover:underline text-lg font-medium">Characters</Link></li>
+          <li><Link to="/media" className="text-disney-blue hover:underline text-lg font-medium">All Media</Link></li>
+          <li><Link to="/movies" className="text-disney-blue hover:underline text-lg font-medium">Movies and Shorts</Link></li>
+          <li><Link to="/series" className="text-disney-blue hover:underline text-lg font-medium">TV Shows</Link></li>
         </ul>
       </nav>
   </header>
@@ -25,6 +31,9 @@ if (container) {
       <NavigationHeader />
       <Routes>
         <Route path="/" element={<Characters />} />
+        <Route path="/media" element={<Medias />} />
+        <Route path="/movies" element={<Movies />} />
+        <Route path="/series" element={<Series />} />
       </Routes>
     </BrowserRouter>
   );
