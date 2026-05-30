@@ -233,15 +233,11 @@ namespace DisneyApi.Controllers
             return Ok(new {message = "Charakter added"});
         }
 
-        public async Task<IActionResult> FetchCharacter(int id)
+        public async Task<CharacterDetailsDto> FetchCharacter(int id)
         {
             var character = await _context.Characters
                 .Include(c => c.Medias)
                 .FirstOrDefaultAsync(c => c.Id == id);
-            if (character == null)
-            {
-                return NotFound();
-            }
             var result = new CharacterDetailsDto
             {
                 Id = character.Id,
@@ -252,10 +248,12 @@ namespace DisneyApi.Controllers
                     Id = m.Id,
                     Title = m.Name,
                     MediaType = m.MediaType,
-                    PosterPath = m.PosterPath
+                    PosterPath = m.PosterPath,
+                    VoteAvg = m.VoteAvg,
+                    VoteCount = m.VoteCount
                 }).ToList()
             };
-            return Ok(result);
+            return result;
         }
     }
 }

@@ -52,7 +52,7 @@ export const apiService = {
     },
 
     getSeriesDetails: async (id: number): Promise<MediaDetails> => {
-        const response = await fetch(`${API_BASE_URL}/series/${id}`);
+        const response = await fetch(`${API_BASE_URL}/media/series/${id}`);
         if (!response.ok) {
             throw new Error('error loading series details');
         }

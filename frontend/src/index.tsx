@@ -6,6 +6,8 @@ import Characters from './Characters';
 import Medias from './Media';
 import Movies from './Movies';
 import Series from './Series';
+import CharacterDetails from './CharacterDetails';
+import MediaDetail from './MediaDetails';
 
 const NavigationHeader = () => {
   return (
@@ -31,9 +33,12 @@ if (container) {
       <NavigationHeader />
       <Routes>
         <Route path="/" element={<Characters />} />
+        <Route path="/character/:id" element={<CharacterDetails />} />
         <Route path="/media" element={<Medias />} />
         <Route path="/movies" element={<Movies />} />
         <Route path="/series" element={<Series />} />
+        <Route path="/movie/:id" element={<MediaDetail />} />
+        <Route path="/series/:id" element={<MediaDetail />} />
       </Routes>
     </BrowserRouter>
   );

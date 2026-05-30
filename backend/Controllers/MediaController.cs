@@ -155,6 +155,7 @@ namespace DisneyApi.Controllers
                 Id = media.Id,
                 Title = media.Name,
                 PosterPath = media.PosterPath,
+                Overview = media.Overview,
                 MediaType = media.MediaType,
                 ReleaseDate = media.ReleaseDate,
                 VoteAvg = media.VoteAvg,
