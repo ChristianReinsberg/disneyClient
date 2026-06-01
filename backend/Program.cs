@@ -38,6 +38,8 @@ builder.Services.AddHttpClient("disneyClient", client =>
 });
 
 builder.Services.AddScoped<TmdbService>();
+builder.Services.AddScoped<DisneyService>();
+builder.Services.AddHostedService<DisneyCrawlerService>();
 
 var app = builder.Build();
 

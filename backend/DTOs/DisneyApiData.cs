@@ -8,6 +8,18 @@ namespace DisneyApi.DTOs
         public List<DisneyResult> Data {get; set;} = [];
     }
 
+    public class DisneyInfo
+    {
+        [JsonPropertyName("info")]
+        public DisneyPages Info {get; set;} = new DisneyPages();
+    }
+
+    public class DisneyPages
+    {
+        [JsonPropertyName("totalPages")]
+        public int TotalPages {get; set;}
+    }
+
     public class DisneyResult
     {
         [JsonPropertyName("_id")]

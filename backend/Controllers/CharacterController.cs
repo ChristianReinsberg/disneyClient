@@ -4,7 +4,6 @@ using DisneyApi.Data;
 using DisneyApi.Models;
 using Microsoft.Extensions.Caching.Memory;
 using DisneyApi.DTOs;
-using System.Text.Json;
 using DisneyApi.Services;
 
 namespace DisneyApi.Controllers
@@ -16,14 +15,14 @@ namespace DisneyApi.Controllers
         private readonly AppDbContext _context;
         private IMemoryCache _cache;
         private IHttpClientFactory _httpClient;
-        private TmdbService _tmdbService;
+        private DisneyService _disneyService;
 
-        public CharacterController(AppDbContext context, IMemoryCache cache, IHttpClientFactory httpClientFactory, TmdbService tmdbService)
+        public CharacterController(AppDbContext context, IMemoryCache cache, IHttpClientFactory httpClientFactory, DisneyService disneyService)
         {
             _context = context;
             _cache = cache;
             _httpClient = httpClientFactory;
-            _tmdbService = tmdbService;
+            _disneyService = disneyService;
         }
 
         [HttpGet]
@@ -37,62 +36,8 @@ namespace DisneyApi.Controllers
             int totalItems = await _context.Characters.CountAsync();
             if (totalItems < page * pageSize)
             {
-                try
-                {
-                    var client = _httpClient.CreateClient("disneyClient");
-                    var url = $"character?page={page}&pageSize={pageSize}";
-
-                    var response = await client.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
-                    var rawJson = await response.Content.ReadAsStringAsync();
-                    var options = new JsonSerializerOptions {PropertyNameCaseInsensitive = true};
-                    List<DisneyResult> finalCharacters = [];
-
-                    using (JsonDocument doc = JsonDocument.Parse(rawJson))
-                    {
-                        var root = doc.RootElement;
-                        if (root.TryGetProperty("data", out JsonElement dataElement))
-                        {
-                            if (dataElement.ValueKind == JsonValueKind.Array)
-                            {
-                                var listData = JsonSerializer.Deserialize<List<DisneyResult>>(dataElement.GetRawText(), options);
-                                if (listData != null)
-                                {
-                                    finalCharacters = listData;
-                                }
-                            }
-                            else if (dataElement.ValueKind == JsonValueKind.Object)
-                            {
-                                var singleData = JsonSerializer.Deserialize<DisneyResult>(dataElement.GetRawText(), options);
-                                if (singleData != null)
-                                {
-                                    finalCharacters.Add(singleData);
-                                }
-                            }
-                        }
-                    }
-                    if (finalCharacters.Any())
-                    {
-                        foreach (var chara in finalCharacters)
-                        {
-                            await AddCharacter(new Character
-                            {
-                                Id = chara.Id,
-                                Name = chara.Name,
-                                ImageUrl = chara.ImageUrl,
-                                Films = chara.Films,
-                                ShortFilms = chara.ShortFilms,
-                                TvShows = chara.TvShows
-                            });
-                        }
-                        await _context.SaveChangesAsync();
-                        totalItems = await _context.Characters.CountAsync();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[API Error] {ex.Message}");
-                }
+                await _disneyService.GetCharacters(page, pageSize);
+                totalItems = await _context.Characters.CountAsync();
             }
 
             var items = await _context.Characters
@@ -136,100 +81,7 @@ namespace DisneyApi.Controllers
             {
                 return BadRequest("data missing");
             }
-            var existingChar = await _context.Characters
-                .Include(c => c.Medias)
-                .FirstOrDefaultAsync(c => c.Id == character.Id);
-            bool isNewChar = false;
-            if (existingChar == null)
-            {
-                isNewChar = true;
-                existingChar = new Character
-                {
-                    Id = character.Id,
-                    Name = character.Name,
-                    ImageUrl = character.ImageUrl,
-                    Films = character.Films,
-                    ShortFilms = character.ShortFilms,
-                    TvShows = character.TvShows,
-                    Medias = new List<Media>()
-                };
-            }
-
-            var films = character.Films.Concat(character.ShortFilms);
-            foreach (var title in films)
-            {
-                var tmdbData = await _tmdbService.GetTmdbMovieAsync(title);
-                var data = tmdbData?.FirstOrDefault();
-
-                if (data != null)
-                {
-                    var existingMedia = _context.Medias.Local.FirstOrDefault(m => m.Id == data.Id && m.MediaType == "Movie");
-                    if (existingMedia == null)
-                    {
-                        await _context.Medias
-                        .FirstOrDefaultAsync(m => m.Id == data.Id && m.MediaType == "Movie");
-                    }
-                    if (existingMedia == null)
-                    {
-                        existingMedia = new Media
-                        {
-                            Id = data.Id,
-                            MediaType = "Movie",
-                            Name = !string.IsNullOrEmpty(data.Name) ? data.Name : data.Title,
-                            Overview = data.Overview,
-                            PosterPath = data.Poster_Path,
-                            ReleaseDate = data.Release_Date,
-                            VoteAvg = data.Vote_Average,
-                            VoteCount = data.Vote_Count
-                        };
-                        _context.Medias.Add(existingMedia);
-                    }
-                    if (existingMedia != null && !existingChar.Medias.Contains(existingMedia))
-                    {
-                        existingChar.Medias.Add(existingMedia);
-                    }
-                }
-            }
-            var series = character.TvShows;
-            foreach (var title in series)
-            {
-                var tmdbData = await _tmdbService.GetTmdbSeriesAsync(title);
-                var data = tmdbData.FirstOrDefault();
-
-                if (data != null)
-                {
-                    var existingMedia = _context.Medias.Local.FirstOrDefault(m => m.Id == data.Id && m.MediaType == "TV");
-                    if (existingMedia == null)
-                    {
-                        existingMedia = await _context.Medias
-                        .FirstOrDefaultAsync(m => m.Id == data.Id && m.MediaType == "TV");
-                    }
-                    
-                    if (existingMedia == null)
-                    {
-                        existingMedia = new Media
-                        {
-                            Id = data.Id,
-                            MediaType = "TV",
-                            Name = !string.IsNullOrEmpty(data.Name) ? data.Name : data.Title,
-                            Overview = data.Overview,
-                            PosterPath = data.Poster_Path,
-                            ReleaseDate = data.First_Air_Date,
-                            VoteAvg = data.Vote_Average,
-                            VoteCount = data.Vote_Count
-                        };
-                        _context.Medias.Add(existingMedia);
-                    }
-                    if (existingMedia != null && !existingChar.Medias.Contains(existingMedia))
-                    {
-                        existingChar.Medias.Add(existingMedia);
-                    }
-                }
-            }
-            if (isNewChar)
-            {
-                _context.Characters.Add(existingChar);
-            }
+            await _disneyService.AddCharacter(character);
             return Ok(new {message = "Charakter added"});
         }
 
