@@ -3,8 +3,8 @@ import { apiService } from './services/api';
 import { Media } from './types';
 import MediaOverview from './components/MediaOverview';
 
-const Series = () => {
-    const [series, setSeries] = useState<Media[]>([]);
+const Shorts = () => {
+    const [shorts, setShorts] = useState<Media[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [hasPrev, setPrev] = useState(false);
@@ -23,8 +23,8 @@ const Series = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const data = await apiService.getSeries(page);
-                setSeries(data.items);
+                const data = await apiService.getShorts(page);
+                setShorts(data.items);
                 setPrev(data.hasPrevPage);
                 setNext(data.hasNextPage);
             } catch (error) {
@@ -40,11 +40,11 @@ const Series = () => {
         <div className="min-h-screen bg-gray-50 p-8">
 
             {loading ? (
-                <p className="text-2xl">loading series...</p>
+                <p className="text-2xl">loading shorts...</p>
             ) : (
                 <div>
-                    <h2 className="text-2xl text-center font-medium text-disney-blue mb-4">Series</h2>
-                    <MediaOverview medias={series} />
+                    <h2 className="text-2xl text-center font-medium text-disney-blue mb-4">Shorts</h2>
+                    <MediaOverview medias={shorts} />
                     <div className={`mt-8 flex ${hasPrev ? 'justify-between' : 'justify-end'}`}>
                         <button onClick={loadPrev} className={`border border-gray-500 p-2 rounded-lg ${!hasPrev ? 'hidden' : ''}`}>prev page</button>
                         <button onClick={loadNext} className={`border border-gray-500 p-2 rounded-lg ${!hasNext ? 'hidden' : ''}`}>next page</button>
@@ -56,4 +56,4 @@ const Series = () => {
     );
 };
 
-export default Series;
+export default Shorts;

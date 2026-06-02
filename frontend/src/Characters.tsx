@@ -10,6 +10,7 @@ const Characters = () => {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [hasPrev, setPrev] = useState(false);
+    const [hasNext, setNext] = useState(false);
     const loadNext = (event: Event) => {
         event.stopPropagation();
         setLoading(true);
@@ -27,6 +28,7 @@ const Characters = () => {
                 const data = await apiService.getCharacters(page);
                 setCharacters(data.items);
                 setPrev(data.hasPrevPage);
+                setNext(data.hasNextPage);
 
             } catch (error) {
                 console.error('could not load data', error);
@@ -52,20 +54,18 @@ const Characters = () => {
                                     <img className="aspect-square w-82 object-contain" src={character.imageUrl !== '' ? character.imageUrl : 'https://static.wikia.nocookie.net/disney/images/7/7c/Noimage.png'} alt={character.name} />
                                     <p className="font-medium pt-3 text-disney-blue">{character.name}</p>
                                     {character.films.length > 0 ? <ExtendableList listContent={character.films} name="Movies" />: null}
-                                    {character.shortFilms.length > 0 ? <ExtendableList listContent={character.shortFilms} name="Movies" />: null}
+                                    {character.shortFilms.length > 0 ? <ExtendableList listContent={character.shortFilms} name="Shorts" />: null}
                                     {character.tvShows.length > 0 ? <ExtendableList listContent={character.tvShows} name="TV Shows" />: null}
                                 </div>
                             )
                         })}
-                        
                     </div>
                     <div className={`mt-8 flex ${hasPrev ? 'justify-between' : 'justify-end'}`}>
                         <button onClick={loadPrev} className={`border border-gray-500 p-2 rounded-lg ${!hasPrev ? 'hidden' : ''}`}>prev page</button>
-                        <button onClick={loadNext} className="border border-gray-500 p-2 rounded-lg">next page</button>
+                        <button onClick={loadNext} className={`border border-gray-500 p-2 rounded-lg ${!hasNext ? 'hidden' : ''}`}>next page</button>
                     </div>
                 </div>
             )}
-            
         </div>
     );
 };

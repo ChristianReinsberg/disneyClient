@@ -75,6 +75,34 @@ namespace DisneyApi.Controllers
             return Ok(result);
         }
 
+        [HttpGet("shorts")]
+        public async Task<ActionResult<PagedResult<Media>>> GetShorts(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 50
+        )
+        {
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 || pageSize > 100 ? 50 : pageSize;
+            int totalItems = await _context.Medias.Where(m => m.MediaType == "Short").CountAsync();
+            var items = await _context.Medias
+            .Where(m => m.MediaType == "Short")
+            .AsNoTracking()
+            .Include(m => m.Characters)
+            .OrderBy(m => m.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+            var result = new PagedResult<Media>
+            {
+                Items = items,
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+            
+            return Ok(result);
+        }
+
         [HttpGet("series")]
         public async Task<ActionResult<PagedResult<Media>>> GetSeries(
             [FromQuery] int page = 1,
@@ -120,6 +148,25 @@ namespace DisneyApi.Controllers
             }
 
             return Ok(movie);
+        }
+
+        [HttpGet("short/{id}")]
+        public async Task<IActionResult> Getshort(int id) {
+            string cacheKey = $"short{id}";
+            if (!_cache.TryGetValue(cacheKey, out MediaDetailsDto? shortF)) {
+                shortF = await FetchMedia(id, "Short");
+                if (shortF == null)
+                {
+                    return NotFound();
+                }
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(30))
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+
+                _cache.Set(cacheKey, shortF, cacheOptions);
+            }
+
+            return Ok(shortF);
         }
 
         [HttpGet("series/{id}")]

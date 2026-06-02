@@ -21,6 +21,9 @@ const MediaDetail = () => {
                     } else if (location.pathname.includes('series')) {
                         const data = await apiService.getSeriesDetails(parseInt(id));
                         setMedia(data);
+                    } else if (location.pathname.includes('shorts')) {
+                        const data = await apiService.getShortDetails(parseInt(id));
+                        setMedia(data);
                     }
                     
                 }

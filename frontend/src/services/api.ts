@@ -27,6 +27,14 @@ export const apiService = {
         return response.json();
     },
 
+    getShorts: async (page: number): Promise<PagedResult> => {
+        const response = await fetch(`${API_BASE_URL}/media/shorts?page=${page}`);
+        if (!response.ok) {
+            throw new Error('error loading all shorts');
+        }
+        return response.json();
+    },
+
     getSeries: async (page: number): Promise<PagedResult> => {
         const response = await fetch(`${API_BASE_URL}/media/series?page=${page}`);
         if (!response.ok) {
@@ -47,6 +55,14 @@ export const apiService = {
         const response = await fetch(`${API_BASE_URL}/media/movie/${id}`);
         if (!response.ok) {
             throw new Error('error loading movie details');
+        }
+        return response.json();
+    },
+
+    getShortDetails: async (id: number): Promise<MediaDetails> => {
+        const response = await fetch(`${API_BASE_URL}/media/short/${id}`);
+        if (!response.ok) {
+            throw new Error('error loading short details');
         }
         return response.json();
     },

@@ -6,6 +6,7 @@ import Characters from './Characters';
 import Medias from './Media';
 import Movies from './Movies';
 import Series from './Series';
+import Shorts from './Shorts';
 import CharacterDetails from './CharacterDetails';
 import MediaDetail from './MediaDetails';
 
@@ -17,7 +18,8 @@ const NavigationHeader = () => {
         <ul className="flex gap-4">
           <li><Link to="/" className="text-disney-blue hover:underline text-lg font-medium">Characters</Link></li>
           <li><Link to="/media" className="text-disney-blue hover:underline text-lg font-medium">All Media</Link></li>
-          <li><Link to="/movies" className="text-disney-blue hover:underline text-lg font-medium">Movies and Shorts</Link></li>
+          <li><Link to="/movies" className="text-disney-blue hover:underline text-lg font-medium">Movies</Link></li>
+          <li><Link to="/shorts" className="text-disney-blue hover:underline text-lg font-medium">Shorts</Link></li>
           <li><Link to="/series" className="text-disney-blue hover:underline text-lg font-medium">TV Shows</Link></li>
         </ul>
       </nav>
@@ -37,8 +39,10 @@ if (container) {
         <Route path="/media" element={<Medias />} />
         <Route path="/movies" element={<Movies />} />
         <Route path="/series" element={<Series />} />
+        <Route path="/shorts" element={<Shorts />} />
         <Route path="/movie/:id" element={<MediaDetail />} />
         <Route path="/series/:id" element={<MediaDetail />} />
+        <Route path="/shorts/:id" element={<MediaDetail />} />
       </Routes>
     </BrowserRouter>
   );
