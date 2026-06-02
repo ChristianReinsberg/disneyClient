@@ -43,7 +43,7 @@ const Movies = () => {
                 <p className="text-2xl">loading movies...</p>
             ) : (
                 <div>
-                    <h2 className="text-2xl text-center font-medium text-disney-blue mb-4">Movies and Shorts</h2>
+                    <h2 className="text-2xl text-center font-medium text-disney-blue mb-4">Movies</h2>
                     <MediaOverview medias={movies} />
                     <div className={`mt-8 flex ${hasPrev ? 'justify-between' : 'justify-end'}`}>
                         <button onClick={loadPrev} className={`border border-gray-500 p-2 rounded-lg ${!hasPrev ? 'hidden' : ''}`}>prev page</button>

@@ -9,6 +9,7 @@ import Series from './Series';
 import Shorts from './Shorts';
 import CharacterDetails from './CharacterDetails';
 import MediaDetail from './MediaDetails';
+import TmdbLogo from './assets/tmdb_logo.svg';
 
 const NavigationHeader = () => {
   return (
@@ -44,6 +45,11 @@ if (container) {
         <Route path="/series/:id" element={<MediaDetail />} />
         <Route path="/shorts/:id" element={<MediaDetail />} />
       </Routes>
+      <footer className="bg-white p-4">
+        <p className="text-center font-medium">&copy; Christian Reinsberg 2026</p>
+        <p className="text-center">Made using data from</p>
+        <img src={TmdbLogo} className="w-90 block mx-auto" alt="The Movie Database Logo" />
+      </footer>
     </BrowserRouter>
   );
 }
