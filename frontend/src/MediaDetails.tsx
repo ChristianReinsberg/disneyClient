@@ -52,7 +52,7 @@ const MediaDetail = () => {
                         </article>
                         <img className="aspect-square w-90 object-contain" src={media.posterPath !== null ? `${img_base}${media.posterPath}` : 'https://static.wikia.nocookie.net/disney/images/7/7c/Noimage.png'} alt={media.name} />
                     </section>
-                    <section>
+                    <section className="mb-8">
                         <h2 className="text-disney-blue text-2xl font-medium text-center mb-4">Characters</h2>
                         <CharacterOverview characters={media.characters} />
                     </section>
