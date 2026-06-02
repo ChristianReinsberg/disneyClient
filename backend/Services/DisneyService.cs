@@ -39,10 +39,6 @@ namespace DisneyApi.Services
                     Medias = new List<Media>()
                 };
             }
-            var films = character.Films.Concat(character.ShortFilms);
-            await AddMedia(films, "Movie", existingChar);
-            var series = character.TvShows;
-            await AddMedia(series, "TV", existingChar);
             if (isNewChar)
             {
                 _context.Characters.Add(existingChar);
