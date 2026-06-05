@@ -9,12 +9,6 @@ Custom build Library SPA that combines the character data from disneyapi.dev and
 
 ---
 
-## 🎟️TODO
-
-- **Implement a search feature:** Add the ability to search for Characters, Films, Shows or Short Films
-
----
-
 ## 💻 Tech Stack
 Languages: TypeScript (Strict Mode), React, ASP.NET Core, PostgeSQL
 
