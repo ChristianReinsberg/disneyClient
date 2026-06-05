@@ -3,6 +3,7 @@ import { apiService } from './services/api';
 import { useNavigate } from 'react-router-dom';
 import { Character } from './types';
 import ExtendableList from './components/ExtendableList';
+import Pagination from './components/Pagination';
 
 const Characters = () => {
     const navigate = useNavigate();
@@ -11,15 +12,21 @@ const Characters = () => {
     const [page, setPage] = useState(1);
     const [hasPrev, setPrev] = useState(false);
     const [hasNext, setNext] = useState(false);
-    const loadNext = (event: Event) => {
-        event.stopPropagation();
+    const loadNext = () => {
         setLoading(true);
         setPage(current => current + 1);
     }
-    const loadPrev = (event: Event) => {
-        event.stopPropagation();
+    const loadPrev = () => {
         setLoading(true);
         setPage(current => current - 1);
+    }
+    const update = (next: boolean) => {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        if (next) {
+            loadNext();
+        } else {
+            loadPrev();
+        }
     }
 
     useEffect(() => {
@@ -60,10 +67,7 @@ const Characters = () => {
                             )
                         })}
                     </div>
-                    <div className={`mt-8 flex ${hasPrev ? 'justify-between' : 'justify-end'}`}>
-                        <button onClick={loadPrev} className={`border border-gray-500 p-2 rounded-lg ${!hasPrev ? 'hidden' : ''}`}>prev page</button>
-                        <button onClick={loadNext} className={`border border-gray-500 p-2 rounded-lg ${!hasNext ? 'hidden' : ''}`}>next page</button>
-                    </div>
+                    <Pagination hasNext={hasNext} hasPrev={hasPrev} update={update} />
                 </div>
             )}
         </div>

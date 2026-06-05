@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from './services/api';
 import { Media } from './types';
 import MediaOverview from './components/MediaOverview';
+import Pagination from './components/Pagination';
 
 const Movies = () => {
     const [movies, setMovies] = useState<Media[]>([]);
@@ -9,15 +10,21 @@ const Movies = () => {
     const [page, setPage] = useState(1);
     const [hasPrev, setPrev] = useState(false);
     const [hasNext, setNext] = useState(false);
-    const loadNext = (event: Event) => {
-        event.stopPropagation();
+    const loadNext = () => {
         setLoading(true);
         setPage(current => current + 1);
     }
-    const loadPrev = (event: Event) => {
-        event.stopPropagation();
+    const loadPrev = () => {
         setLoading(true);
         setPage(current => current - 1);
+    }
+    const update = (next: boolean) => {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        if (next) {
+            loadNext();
+        } else {
+            loadPrev();
+        }
     }
 
     useEffect(() => {
@@ -45,10 +52,7 @@ const Movies = () => {
                 <div>
                     <h2 className="text-2xl text-center font-medium text-disney-blue mb-4">Movies</h2>
                     <MediaOverview medias={movies} />
-                    <div className={`mt-8 flex ${hasPrev ? 'justify-between' : 'justify-end'}`}>
-                        <button onClick={loadPrev} className={`border border-gray-500 p-2 rounded-lg ${!hasPrev ? 'hidden' : ''}`}>prev page</button>
-                        <button onClick={loadNext} className={`border border-gray-500 p-2 rounded-lg ${!hasNext ? 'hidden' : ''}`}>next page</button>
-                    </div>
+                    <Pagination hasNext={hasNext} hasPrev={hasPrev} update={update} />
                 </div>
             )}
             
