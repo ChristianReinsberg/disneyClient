@@ -1,4 +1,4 @@
-import { CharacterDetails, MediaDetails, PagedResult } from "../types";
+import { CharacterDetails, MediaDetails, PagedResult, SearchResult } from "../types";
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -71,6 +71,14 @@ export const apiService = {
         const response = await fetch(`${API_BASE_URL}/media/series/${id}`);
         if (!response.ok) {
             throw new Error('error loading series details');
+        }
+        return response.json();
+    },
+
+    getSearchEntries: async (term: string): Promise<SearchResult> => {
+        const response = await fetch(`${API_BASE_URL}/search?term=${term}`);
+        if (!response.ok) {
+            throw new Error('error loading search entries');
         }
         return response.json();
     }

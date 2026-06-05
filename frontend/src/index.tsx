@@ -10,10 +10,11 @@ import Shorts from './Shorts';
 import CharacterDetails from './CharacterDetails';
 import MediaDetail from './MediaDetails';
 import TmdbLogo from './assets/tmdb_logo.svg';
+import Searchbar from './components/Searchbar';
 
 const NavigationHeader = () => {
   return (
-    <header className="my-8 mx-8 flex gap-8 items-end">
+    <header className="my-8 mx-8 flex gap-8 items-center">
       <h1 className="text-3xl font-medium text-disney-blue">Disney Library</h1>
       <nav>
         <ul className="flex gap-4">
@@ -24,6 +25,7 @@ const NavigationHeader = () => {
           <li><Link to="/series" className="text-disney-blue hover:underline text-lg font-medium">TV Shows</Link></li>
         </ul>
       </nav>
+      <Searchbar />
   </header>
   )
 }

@@ -30,7 +30,7 @@ export type Media = {
     characters: Character[];
 }
 
-export type MediaType = 'Movie' | 'TV';
+export type MediaType = 'Movie' | 'TV' | 'Short' | 'Character';
 
 export interface CharacterDetails{
     id: number;
@@ -62,4 +62,14 @@ export interface ShortCharacterDetails {
     id: number;
     name: string;
     imageUrl: string;
+}
+
+export interface SearchEntry {
+    id: number;
+    name: string;
+    type: MediaType;
+}
+
+export interface SearchResult {
+    suggestions: SearchEntry[];
 }
