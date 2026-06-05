@@ -8,6 +8,7 @@ const Medias = () => {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [hasPrev, setPrev] = useState(false);
+    const [hasNext, setNext] = useState(false);
     const loadNext = (event: Event) => {
         event.stopPropagation();
         setLoading(true);
@@ -25,7 +26,7 @@ const Medias = () => {
                 const data = await apiService.getMedia(page);
                 setMedias(data.items);
                 setPrev(data.hasPrevPage);
-
+                setNext(data.hasNextPage);
             } catch (error) {
                 console.error('could not load data', error);
             } finally {
@@ -46,7 +47,7 @@ const Medias = () => {
                     <MediaOverview medias={medias} />
                     <div className={`mt-8 flex ${hasPrev ? 'justify-between' : 'justify-end'}`}>
                         <button onClick={loadPrev} className={`border border-gray-500 p-2 rounded-lg ${!hasPrev ? 'hidden' : ''}`}>prev page</button>
-                        <button onClick={loadNext} className="border border-gray-500 p-2 rounded-lg">next page</button>
+                        <button onClick={loadNext} className={`border border-gray-500 p-2 rounded-lg ${!hasNext ? 'hidden' : ''}`}>next page</button>
                     </div>
                 </div>
             )}
